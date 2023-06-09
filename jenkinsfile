@@ -1,0 +1,74 @@
+pipeline {
+  agent any
+
+   environment {     
+    DOCKERHUB_CREDENTIALS= credentials('Azureserviceprincipal')     
+              }    
+  stages{
+        stage("Git Checkout") {
+      steps {
+        script {
+          git branch: 'main', credentialsId: 'Azureserviceprincipals', url: 'https://github.com/Mouradchelbi/nginx_customs_image_terraform.git'
+        }
+      }
+    }
+
+     stage("Parameter Setup") {
+      steps {
+        script {
+        properties([
+          parameters([
+            choice(choices: ['apply', 'destroy'], name: 'ACTION')])])
+        }
+      }
+    }
+          
+    stage("Terraform Validate") {
+      steps {
+        script {
+          dir('ProdEnvironment/') {
+            sh 'terraform validate'
+          }
+          dir('stagingEnvironment/') {
+            sh 'terraform validate'
+          }
+        }
+      }
+    }
+    stage('Terraform Plan') {
+      steps {
+        script {
+          dir('ProdEnvironment/') {
+            sh 'terraform plan'
+          }
+          dir('stagingEnvironment/') {
+            sh 'terraform plan'
+          }
+        }
+      }
+    }
+    stage('Terraform Approval') {
+      steps {
+        script {
+          def userInput = input(id: 'confirm', message: 'Approve Terraform ?', parameters: [
+            [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Approve Terraform', name: 'confirm']
+          ])
+        }
+      }
+    }
+    stage('Terraform Action') {
+      steps {
+        script {
+          dir('ProdEnvironment/') {
+            sh 'terraform $ACTION --auto-approve'
+          }
+          dir('stagingEnvironment') {
+            sh 'terraform $ACTION --auto-approve'
+          }
+        }
+      }
+ 
+ 
+   }
+}
+}
