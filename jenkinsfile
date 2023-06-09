@@ -22,12 +22,27 @@ pipeline {
         }
       }
     }
+    
+    stage("Terraform init") {
+      steps {
+        script {
+          dir('ProdEnvironment/') {
+            sh 'terraform init'
+            
+          }
+          dir('stagingEnvironment/') {
+            sh 'terraform init'
+          }
+        }
+      }
+    }
           
     stage("Terraform Validate") {
       steps {
         script {
           dir('ProdEnvironment/') {
             sh 'terraform validate'
+            
           }
           dir('stagingEnvironment/') {
             sh 'terraform validate'
