@@ -1,8 +1,6 @@
 pipeline {
   agent any
 
-   environment {     
-    DOCKERHUB_CREDENTIALS= credentials('Azureserviceprincipal')     
               }    
   stages{
         stage("Git Checkout") {
@@ -23,11 +21,11 @@ pipeline {
       }
     }
     
-    stage("Terraform init") {
+    stage("Terraform Init") {
       steps {
         script {
-          dir('ProdEnvironment/') {
-            sh 'terraform init'
+         sh 'cd ProdEnvironement' & sh 'terraform init'
+ {
             
           }
           dir('stagingEnvironment/') {
