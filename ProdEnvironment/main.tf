@@ -7,8 +7,9 @@ module  "Prod" {
    client_secret = var.client_secret
    tenant_id = var.tenant_id
    skip_provider_registration = true
-   features {}
-}
+   features {
+   }
+
 }
   
   
