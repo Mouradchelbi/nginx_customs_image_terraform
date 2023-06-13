@@ -1,1 +1,1 @@
-# nginx_dockercustoms_image_terraform_jenkins_deploy
+# Jenkinsfile_pipeline_deployoment of on Azure resources_using Terraform infra
